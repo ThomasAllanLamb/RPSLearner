@@ -1,0 +1,237 @@
+<html>
+	<head>
+		<title>About RPS Learner</title>
+		<style type="text/css">
+			body
+			{
+				margin:0px;
+				padding:0px;
+				text-align:center;
+				font-size:16px;
+			}
+			
+			#centeredBlock
+			{
+				width:750px;
+				text-align:left;
+				margin:0px auto 14em auto;
+			}
+			
+			p
+			{
+				text-indent:30px;
+			}
+			
+			table
+			{
+				margin:2em;
+			}
+			
+			thead
+			{
+				text-decoration:underline;
+			}
+			
+			td
+			{
+				border-width: 1px 1px 1px 1px;
+				padding: 1px 9px 1px 9px;
+				background-color: white;
+				-moz-border-radius: 0px 0px 0px 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="centeredBlock">
+			<small><a href="RPSLearner.html">Back to RPS Learner</a></small><br />
+			<br />
+			<br />
+			<h1 style="display:inline">About RPS Learner</h1><br />
+			<br />
+			Author: Tom Lamb, <a href="mailto:lambyte@lambyte.com">lambyte@lambyte.com</a><br/>
+			Created: 2007.07.25<br />
+			Description: Rock, Paper, Scissors (RPS) Learner is essentially a demonstration of a more generalized algorithm I call <i>State Learner</i>. State Learner takes data (which I call "states") in series from a user, and tries to predict what the next datum (or "state") will be, based on the history.<br />
+			
+			<h2>How to use RPS Learner</h2>
+			<p>Pretty simple: press the button which corresponds to your move &mdash; the button under "rock" if you want to throw that, the button under "paper" if that, and so on.</p>
+			<p>Options:</p>
+			<ul>
+				<li>Recall limit: this is the biggest block of history that the computer is allowed to remember. This can be used either to speed up gameplay (the default is set to infinity) or to stunt the computer's ability. If set to 0, then the computer won't be able to remember anything at all, meaning it will play randomly.</li>
+				<li>AI prediction visibility: whether or not you want to see the AI's prediction of your next move. This is useful in case you want proof that there's no cheating going on: just turn it on, do one round to make sure it works, then cover it with a clipped post-it note or something. This way you get the benefit of not having your moves tainted by knowledge of the computer's prediction, but you also have proof that the computer is doing everything legitimately.</li>
+			</ul><br />
+			
+			<h2>Explanation of statistics</h2>
+			
+			<p>The statistics provided help evaluate the algorithm's effectiveness.</p>
+			
+			<ul>
+				<li>Accuracy: accuracy = aIWins/roundsPassed<br />
+				This is just the percentage of rounds won &mdash; as opposed to tied or lost &mdash; so far.</li>
+				<li>Gain from AI: aIGain = accuracy-(1/3)<br />
+				The difference in accuracy between the algorithm and random guessing. This can be negative, which indicates that the algorithm is actually doing more harm than good.</li>
+				<li>Normalized gain: normalizedGain = aIGain/(1/3)<br />
+				The gain from AI that can be compared with other instances of the State Learner algorithm. For example, it's much easier to gain 10% over random guessing when there are three states to choose from than when there are a thousand states to choose from. However, if you were to compare the normalized gains, they should be the same under the same "level of difficulty."</li>
+			</ul><br />
+			
+			
+			<h2>How does it work?</h2>
+			
+			<p>The algorithm is taken right out of common sense. Just imagine that you were the computer, and the user had input the following:<br />
+			
+			<pre>A B A B A B</pre> 
+			(each state is separated by a space)<br />
+			
+			...And you were asked to predict what would come next. What would you choose? Odds are, you'd say A. Now, just ask yourself <i>why</i> you said A. The answer is because every time the user had entered B in the past, the next state was always A.</p>
+			
+			<p>This is basically how the State Learner algorithm works as well, with the exception of a few improvements. It searches for a time in the history that was identical to the previous states, and then answers with whatever had come next. There are some cases where that method isn't completely clear about what the best answer is, however. For example, when more than one pattern is present and noise is added:<br />
+			
+			<pre>A A B Z A A A C Y A A A C X A A B W V A A A</pre> 
+			<em>Note: in order for the algorithm to be generalized, it should have no knowledge of the order of the english alphabet. Letters are just being used here as unique symbols to represent unique data.</em><br />
+			
+			This is probably pretty confusing to look at, and if you were asked the next state it might take you a while to see any intelligible pattern. If you look closely, you'll see that every B is preceded by AA, while every C is preceded by AAA:<br />
+			
+			<pre><u>A A B</u> Z <u>A A A C</u> Y <u>A A A C</u> X <u>A A B</u> W V A A A</pre>
+			
+			With this insight, we know that, because the last states were AAA, then the "correct" prediction is C. However, if we used the same method as we used before and just looked through history for A, the most recent state, we would get the following incidence chart:
+			
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2">States following A</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>State</td><td>Incidence</td>
+					</tr>
+					<tr>
+						<td>A</td><td>8</td>
+					</tr>
+					<tr>
+						<td>B</td><td>2</td>
+					</tr>
+					<tr>
+						<td>C</td><td>2</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			According to this method, the answer is overwhelmingly in favour of A &mdash; but we know it's supposed to be C. The problem is that we're only working with a small part of the information we really need. After all, in order to know the next will be C, we need to see three A states in a row, not just one. Had we searched for AAA in the history, we would get this incidence chart:
+			
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2">States following AAA</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>State</td><td>Incidence</td>
+					</tr>
+					<tr>
+						<td>C</td><td>2</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			So the more states we check, the more likely our answer will be correct. Although I'm sure that there is a proof that exists which shows that more history is more accurate, I'm too lazy to figure that out completely right now, and so I just accept this demonstration as empirical evidence which supports my intuition. I think it might stem from axioms: that the only states that we can predict are the states that have occured before; that the probability of any unknown state being any known state is equal among all known states; that everything happens for a reason; that the correct prediction method is the same throughout history; some of the above. That last axiom is also true of the user's pattern, because the method the user uses to input the next state is the answer that the correct pattern will find.</p>
+			
+			<p>There is just one thing left to make this algorithm complete: what happens when we find that two states are equally likely, according to history, of coming next? Can we do anything to break the tie? For example, what if you had to predict the next state from the following history:<br />
+			
+			<pre>A B X A A B Z A A D A A D A A B A B A A</pre><br />
+			
+			The two most prominent patterns here are AAB and AAD:
+			
+			<pre>A B X <u>A A B</u> Z <u>A A D</u> <u>A A D</u> <u>A A B</u> A B A A</pre><br />
+			
+			So, using the method of looking for a match of the longest block of recent history within distant history, we find that AA is the longest block that has existed before. (The whole history, ABC...BAA does not exist, nor does anything shorter through to BAA.) So let's take a look at the incidence chart of AA, then:</p>
+			
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2">States following AA</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>State</td><td>Incidence</td>
+					</tr>
+					<tr>
+						<td>B</td><td>2</td>
+					</tr>
+					<tr>
+						<td>D</td><td>2</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			It's a tie. This is to be expected, as each pattern happened twice. But we can refine the results by seeing what shorter recent history blocks say about the results, because, as a matter of fact, there is yet another pattern in history: AB. AB occurs twice on its own, independent of the AAB:
+			
+			<pre><u>A B</u> X A A B Z A A D A A D A A B <u>A B</u> A A</pre><br />
+			
+			And by searching for just A, as opposed to AA, in the history, we will find that pattern:
+			
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2">States following A</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>State</td><td>Incidence</td>
+					</tr>
+					<tr>
+						<td>A</td><td>5</td>
+					</tr>
+					<tr>
+						<td>B</td><td>4</td>
+					</tr>
+					<tr>
+						<td>D</td><td>2</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			Because we have already used a more detailed chunk of history to rule out A, we disregard it, even though it comes in first. Instead, we notice that at this level, B becomes more likely than D. And since all lower levels of detail are less important, there's no need to keep checking smaller pieces of recent history; we have found our winner.</p>
+			
+			<p>Now the algorithm is practically complete. Just one realization needs to be added: the number of states that are searched for within the history does not need to be more than zero. That is, an empty or <i>null</i> history can be searched for as well, which will match every input in history. Take this history, for example:
+			
+			<pre>S T A T E S</pre>
+			
+			The incidence chart given by a search for a null history is then this, which is equivalent to the frequency of each letter:
+			
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2">States following <i>null</i></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>State</td><td>Incidence</td>
+					</tr>
+					<tr>
+						<td>S</td><td>2</td>
+					</tr>
+					<tr>
+						<td>T</td><td>2</td>
+					</tr>
+					<tr>
+						<td>A</td><td>1</td>
+					</tr>
+					<tr>
+						<td>E</td><td>1</td>
+					</tr>
+					</tr>
+				</tbody>
+			</table>
+			</p>
+			
+			<p>In the future, I plan on applying this algorithm to numbers. I also believe that this algorithm is strong enough to autonomously learn anything, and could act as a rational agent as long as it is given a function which returns an indication of which state is preferred over another.</p>
+			
+			<p><b>UPDATE:</b> I have learned that this algorithm essentially just uses <a href="http://en.wikipedia.org/wiki/Markov_chain">Markov Chains</a>.</p>
+		</div>
+	</body>
+
+</html>
