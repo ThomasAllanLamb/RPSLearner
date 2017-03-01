@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>ArrayMap Driver</title>
+		<script type="text/javascript" src="Page.js"></script>
+		<script type="text/javascript">
+			Page.includeOnce("Diag.js");
+		</script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var constructedFunction = new Function ();
+			var anonymousFunction = function () {return;};
+			var namedProceduralFunction = function proceduralFunction () {return;};
+			function environmentFunction ()
+			{
+				return;
+			}
+			Diag.trace("Constructed function = "+constructedFunction);
+			Diag.trace("Anonymous function = "+anonymousFunction);
+			Diag.trace("Named function = "+namedProceduralFunction);
+			
+		</script>
+	</body>
+</html>

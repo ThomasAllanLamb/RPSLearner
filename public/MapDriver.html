@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Map Driver</title>
+		<script type="text/javascript" src="Page.js"></script>
+		<script type="text/javascript">
+			Page.includeOnce("Diag.js");
+			Page.includeOnce("Map.js");
+			Page.includeOnce("Entry.js");
+		</script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var myMap = new Map();
+			Diag.trace("Empty myMap = "+myMap);
+			myMap.set("a", 1);
+			myMap.set("b", 2);
+			myMap.set([1,2,3], "array leads to text");
+			var objectIndex = new Object();
+			objectIndex.x = 5;
+			objectIndex.y = 7;
+			myMap.set(objectIndex, "object value");
+			Diag.trace("Filled myMap = "+myMap);
+			Diag.trace("myMap.get([1,2,3]) = "+myMap.get([1,2,3]));
+			var spawn = myMap.clone();
+			Diag.trace("Clone of myMap = "+spawn);
+		</script>
+	</body>
+</html>

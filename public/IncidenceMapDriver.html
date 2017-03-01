@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<title>IncidenceMap Driver</title>
+		<script type="text/javascript" src="Page.js"></script>
+		<script type="text/javascript">
+			Page.includeOnce("IncidenceMap.js");
+			Page.includeOnce("Entry.js");
+			Page.includeOnce("Diag.js");
+			Page.includeOnce("Map.js");
+		</script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var myIncidenceMap = new IncidenceMap();
+			Diag.trace("Empty map = "+myIncidenceMap);
+			Diag.trace("myIncidenceMap.size = "+myIncidenceMap.size);
+			
+			myIncidenceMap.set("a", 0);
+			var objectIndex = new Object();
+			objectIndex.x = 5;
+			myIncidenceMap.set(objectIndex, 1);
+			
+			myIncidenceMap.set([1,2], 2);
+			myIncidenceMap.set(3, 2);
+			
+			Diag.trace("Filled-in map = "+myIncidenceMap);
+			Diag.trace("Filled map .size = "+myIncidenceMap.size);
+			
+			Diag.trace("Filled-in map maxima = "+myIncidenceMap.getMaxima());
+			
+			spawnedMap = myIncidenceMap.clone();
+			Diag.trace("Clone of map = "+spawnedMap);
+			
+			spawnedMap.sendEachTo(function (entry)
+				{
+					spawnedMap.increment(entry.key);
+				});
+			Diag.trace("After all incremented via sendEachTo and increment, cloned map = "+spawnedMap);
+			
+			spawnedMap.increment(objectIndex, 5);
+			Diag.trace("After object increment of 5, cloned map = "+spawnedMap);
+			
+			Diag.trace("Clone maxima = "+spawnedMap.getMaxima());
+			
+			Diag.trace("Donor map = "+myIncidenceMap);
+		</script>
+	</body>
+</html>

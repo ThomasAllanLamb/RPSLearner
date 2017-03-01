@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+	<head>
+		<title>Number Learner v.1</title>
+		<script type="text/javascript" src="../../Page.js"></script>
+		<script type="text/javascript">
+			Page.baseDirectory = "../../";
+			/*** Used directly ***/
+			Page.includeOnce("Diag.js");
+			Page.includeOnce("State%20Learner/GroupLearner.js");
+			Page.includeOnce("State%20Learner/PredictionData.js");
+			
+		</script>
+		<style type="text/css">
+			body
+			{
+				margin:0px;
+				padding:0px;
+				text-align:center;
+				font-size:16px;
+			}
+			
+			#centeredBlock
+			{
+				width:750px;
+				text-align:left;
+				margin:0px auto;
+				margin-bottom:8em;
+			}
+			
+			p
+			{
+				text-indent:30px;
+			}
+			
+			.math
+			{
+				font-family:monospace;
+				text-decoration:none;
+			}
+			
+			input.field
+			{
+				font-size:18px;
+				width:5em;
+				font-family:monospace;
+			}
+			
+			textarea
+			{
+				vertical-align:text-top;
+			}
+			
+			table.definitions
+			{
+				border-spacing:1px;
+				margin:0px;
+			}
+			
+			table.definitions td
+			{
+				text-align:left;
+			}
+			
+			.panel
+			{
+				margin:0.5em 0px 0.5em 25px;
+				padding: 0.5em 0px 0.5em 25px;
+				border-left:dashed 1px #AAA;
+				background:#EEE;
+			}
+			
+			#advancedHeader
+			{
+				cursor:pointer;
+				color:#3b5998;
+			}
+			
+			#advancedHeader:hover
+			{
+				text-decoration:underline;
+			}
+			
+			#advancedPanel
+			{
+				/*initial display setting*/
+				display:none;
+			}
+			
+			#numberTable
+			{
+				border-collapse:collapse;
+				border-spacing:0px;
+				font-family:monospace;
+				width:100%;
+			}
+			
+			#numberTable thead td
+			{
+				border-bottom:solid 1px black;
+			}
+			
+			#numberTable td
+			{
+				padding:0px 1em;
+				height:30px;
+				text-align:center;
+			}
+			
+			td.indexColumn
+			{
+				background-color:#EED;
+				border-right:solid 1px black;
+			}
+			
+			td.predictionColumn
+			{
+				color:purple;
+			}
+			
+			thead .predictionColumn
+			{
+				color:black;
+			}
+			
+			td#expandingColumn
+			{
+				width:100%;
+			}
+			
+			.button
+			{
+				background-color:#EEF5F5;
+				border:solid 1px black;
+				padding:3px;
+				-moz-border-radius:3px;
+				cursor:pointer;
+			}
+			
+			.button:hover
+			{
+				background-color:#CFC;
+			}
+			
+			.humanSelect, .aISelect, .bothSelect
+			{
+				display:block;
+				margin:auto;
+				width:30px;
+				height:30px;
+				text-align:center;
+			}
+			
+			.humanSelect
+			{
+				opacity:0.5;
+				background-color:red;
+			}
+			
+			.aISelect
+			{
+				opacity:0.5;
+				background-color:blue;
+			}
+			
+			.bothSelect
+			{
+				background-color:purple;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			//<![CDATA[
+			Diag.traceEnabled = true;
+			
+			//construct
+			var numberLearner;
+			var userFunction;
+			var n;
+			var round;
+			var advancedVisible;
+			var startingIndex;
+			var precision;
+			var displayMode;
+			var DisplayModes = new Object();
+			DisplayModes.EAST = 1;
+			DisplayModes.SOUTHWEST = 2;
+			
+			window.onload = function ()
+			{
+				numberLearner = new GroupLearner(Infinity, distance, add);
+				userFunction = new Function();
+				n = 0;
+				roundsPassed = 0;
+				precision = 3;
+				advancedVisible = false; 
+				
+				enforcePrecision();
+				enforceRecall();
+				enforceN();
+				renewPrediction();
+				enforceStartingIndex();
+				enforceAdvancedVisible();
+				enforceDisplayMode();
+			}
+			
+			function enforceDisplayMode ()
+			{
+				var node = document.getElementById("displayEast");
+				if (node.checked)
+				{
+					displayMode = DisplayModes.EAST;
+				}
+			}
+			
+			function enforcePrecision ()
+			{
+				var precisionNode = document.getElementById("precision");
+				
+				var enteredPrecision = Number(precisionNode.value);
+				if (isNaN(enteredPrecision))
+				{
+					//this will also catch misspellings of "Infinity," like "infinity," so we don't need to catch those specifically.
+					enteredPrecision = 3;
+				}
+				else if (enteredPrecision < 0)
+				{
+					enteredPrecision = 0;
+				}
+				else
+				{
+					enteredPrecision = Math.round(enteredPrecision);
+				}
+				
+				precision = enteredPrecision;
+				
+				precisionNode.value = enteredPrecision;
+			}
+			
+			function enforceRecall ()
+			{
+				var recallNode = document.getElementById("recall");
+				
+				var enteredRecall = Number(recallNode.value);
+				if (isNaN(enteredRecall))
+				{
+					//this will also catch misspellings of "Infinity," like "infinity," so we don't need to catch those specifically.
+					enteredRecall = Infinity;
+				}
+				else if (enteredRecall < 0)
+				{
+					enteredRecall = 0;
+				}
+				else
+				{
+					enteredRecall = Math.round(enteredRecall);
+				}
+				
+				numberLearner.recall = enteredRecall;
+				
+				recallNode.value = enteredRecall;
+			}
+			
+			function enforceN ()
+			{
+				var cell = document.getElementById("n");
+				cell.removeChild(cell.firstChild);
+				var nText = document.createTextNode(n);
+				cell.appendChild(nText);
+			}
+			
+			//UNF: Use array returned by takeInput to update table
+			function addHistory (number)
+			{
+				var tableBody = document.getElementById("tableBody");
+				
+				var latestStates = numberLearner.takeInput(number);
+				
+				if (latestStates.length >= 2)
+				{
+					//difference columns do not start until 2 states have been added
+					var tableHead = document.getElementById("headRow");
+					var deltaCell = document.createElement("td");
+					var deltaText = document.createTextNode("\u0394");
+					deltaCell.appendChild(deltaText);
+					
+					var expandingCell = document.getElementById("expandingColumn");
+					tableHead.insertBefore(deltaCell, expandingCell);
+				}
+				
+				var lastRow = tableBody.childNodes[tableBody.childNodes.length-1];
+				var userFunctionCell = document.createElement("td");
+				var userFunctionText = document.createTextNode(number);
+				userFunctionCell.appendChild(userFunctionText);
+				lastRow.appendChild(userFunctionCell);
+				
+				if (displayMode == DisplayModes.EAST)
+				{
+					for (var i = 1; i <= roundsPassed; i++)
+					{
+						//UNF: Update to use latestStates
+						var tc = tableBody.childNodes;
+						
+						var differenceRow = tc[tc.length-1-i];
+						
+						var blankCell = document.createElement("td");
+						differenceRow.appendChild(blankCell);
+						
+						var differenceCell = document.createElement("td");
+						var differenceText = document.createTextNode(latestStates[i].toPrecision(precision));
+						differenceCell.appendChild(differenceText);
+						differenceRow.appendChild(differenceCell);
+					}
+				}
+				else if (displayMode == DisplayModes.SOUTHWEST)
+				{
+					var lastRow = tableBody.childNodes[tableBody.childNodes.length-1];
+					for (var i = 1; i <= latestStates.length-1; i++)
+					{
+						var differenceCell = document.createElement("td");
+						var differenceText = document.createTextNode(latestStates[i]);
+						differenceCell.appendChild(differenceText);
+						lastRow.appendChild(differenceCell);
+					}
+				}
+				n++;
+				
+				renewPrediction();
+				
+				roundsPassed++;
+			}
+			
+			function renewPrediction ()
+			{
+				Diag.trace("renewPrediction()");
+				Diag.traceLevel++;
+				//get prediction
+				var predictionData = numberLearner.makePrediction();
+				var prediction;
+				if (predictionData.states.length == 0)
+				{
+					prediction = "?";
+				}
+				else if (predictionData.states.length == 1)
+				{
+					prediction = predictionData.states[0];
+				}
+				else
+				{
+					//there are multiple equally-likely states, so display this as an array.
+					prediction = predictionData.states;
+				}
+				Diag.trace("predictionData.states = "+predictionData.states);
+				
+				var tableBody = document.getElementById("tableBody");
+				
+				var rows = tableBody.getElementsByTagName("tr").length;
+				
+				if (rows >= 1)
+				{
+					//we need blank rows to accomodate difference columns, but there are no difference columns before roundsPassed=1 so blank rows are not needed then
+					var blankRow = document.createElement("tr");
+					var blankIndex = document.createElement("td");
+					blankIndex.className = "indexColumn";
+					blankRow.appendChild(blankIndex);
+					
+					var blankPrediction = document.createElement("td");
+					blankRow.appendChild(blankPrediction);
+					tableBody.appendChild(blankRow);
+				}
+				
+				var predictionRow = document.createElement("tr");
+				var indexCell = document.createElement("td");
+				indexCell.className = "indexColumn";
+				
+				var indexText = document.createTextNode(n);
+				indexCell.appendChild(indexText);
+				predictionRow.appendChild(indexCell);
+				
+				var predictionCell = document.createElement("td");
+				predictionCell.className = "predictionColumn";
+				
+				var predictionText = document.createTextNode(prediction)
+				predictionCell.appendChild(predictionText);
+				predictionRow.appendChild(predictionCell);
+				
+				tableBody.appendChild(predictionRow);
+				Diag.traceLevel--;
+			}
+			
+			function addOne ()
+			{
+				var cell = document.getElementById("addOne");
+				var number = Number(cell.value);
+				addHistory(number);
+				enforceN();
+			}
+			
+			function addSequence ()
+			{
+				var userFunctionCell = document.getElementById("userFunction");
+				userFunction = eval("function (n) {"+userFunctionCell.value+"};");
+				var sequenceLengthCell = document.getElementById("sequenceLength");
+				var sequenceLength = Number(sequenceLengthCell.value);
+				for (var i = 0; i <= sequenceLength-1; i++)
+				{
+					addHistory(userFunction(n));
+				}
+				enforceN();
+			}
+			
+			function toggleAdvanced ()
+			{
+				advancedVisible = advancedVisible? false : true;
+				enforceAdvancedVisible();
+			}
+			
+			function enforceAdvancedVisible ()
+			{
+				var display = advancedVisible? "block" : "none";
+				var panel = document.getElementById("advancedPanel");
+				panel.style.display = display;
+				var header = document.getElementById("advancedHeader");
+				var indicatorNode = header.firstChild;
+				indicatorNode.removeChild(indicatorNode.firstChild);
+				//Unicode 2013 is &endash; I use this instead of hyphen/minus because hyphen/minus is too short for my tastes
+				var indicatorText = document.createTextNode(advancedVisible? "\u2013" : "+");
+				indicatorNode.appendChild(indicatorText);
+			}
+			
+			function enforceStartingIndex ()
+			{
+				var startingIndexNode = document.getElementById("startingIndex");
+				var startingIndex = Number(startingIndexNode.value);
+				if (isNaN(startingIndex))
+				{
+					startingIndex = 0;
+				}
+				else 
+				{
+					startingIndex = Math.round(startingIndex);
+				}
+				startingIndexNode.value = startingIndex;
+				var table = document.getElementById("tableBody");
+				var trs = table.getElementsByTagName("tr");
+				if (trs.length == 1)
+				{
+					n = startingIndex;
+					var indexCell = trs[0].firstChild;
+					indexCell.removeChild(indexCell.firstChild);
+					var indexText = document.createTextNode(n);
+					indexCell.appendChild(indexText);
+					enforceN();
+				}
+			}
+			
+			
+			/*** Functions for GroupLearner combinations ***/
+			
+			function distance (pre, post)
+			{
+				return post-pre;
+			}
+			
+			function add (pre, product)
+			{
+				return pre+product;
+			}
+			//]]>
+		</script>
+		<h3>Number Learner:</h3>
+		a learning algorithm which is aware of the relationship between numbers. <a href="AboutNumberLearner.html">More information...</a><br />
+		<div id="centeredBlock">
+			<h4>Options</h4>
+			<div class="panel">
+				<table class="definitions">
+					<tbody>
+						<tr><td>Recall limit:</td><td><input id="recall" name="recall" type="text" onblur="enforceRecall()" class="field" value="Infinity"></td></tr>
+						<tr><td>Starting index:</td><td><input id="startingIndex" name="startingIndex" type="text" onblur="enforceStartingIndex();" class="field" value="0"></td></tr>
+					</tbody>
+				</table>
+				<h4 id="advancedHeader" onclick="toggleAdvanced();"><span>+</span> Advanced Options</h4>
+				<div id="advancedPanel" class="panel">
+					<table class="definitions">
+						<tbody>
+							<tr><td>Decimal places:</td><td><input id="precision" name="precision" type="text" onblur="enforcePrecision()" class="field" value="3"></td></tr>
+							<tr><td>Table layout</td><td><input id="displayEast" name="displayMode" type="radio" onBlur="enforceDisplayMode()" checked="checked" />East arrow</td></tr>
+							<tr><td></td><td><input id="displaySouthwest" name="displayMode" type="radio" onBlur="enforceDisplayMode()" />Southwest arrow</td>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<h4>Legend</h4>
+			<div class="panel">
+				<table class="definitions">
+					<tbody>
+						<tr><td class="math">n</td><td>Index</td></tr>
+						<tr><td class="math">?(f,n)</td><td>The as-of-yet unnamed prediction algorithm's prediction for the value of <span class="math">f(n)</span>.</td></tr>
+						<tr><td class="math">f(n)</td><td>User-defined function.</td></tr>
+						<tr><td class="math">&#x0394;</td><td>The difference between the elements above and below this element in the column to the left.</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<h4>Controls</h4>
+			<div class="panel">
+				Input one number: 
+				<div class="panel">
+					<span class="math">f(<span id="n">0</span>) = </span><input id="addOne" name="addOne" type="text" onblur="if (isNaN(Number(this.value)) || Number(this.value) == Infinity) {this.value = 0;} else {this.value = Number(this.value);}" class="field" value="0" /><br />
+					<span class="button" onclick="addOne();">Add</span>
+				</div>
+				Input a sequence according to a formula:
+				<div class="panel">
+					Length of sequence: <input id="sequenceLength" name="sequenceLength" type="text" value="5" onblur="if (isNaN(Number(this.value))) {this.value = Infinity;} else {this.value = Number(this.value);}" class="field" /><br />
+					Javascript:<span class="math"> f(n) = {</span><textarea id="userFunction" name="userFunction" rows="3" cols="24">return Math.pow(3,n);</textarea> }<br />
+					<span class="button" onclick="addSequence();">Add</span>
+				</div>
+			</div>
+			<br />
+			<div>
+				<table id="numberTable">
+					<thead>
+						<tr id="headRow">
+							<td class="indexColumn">n</td>
+							<td class="predictionColumn">?(f,n)</td>
+							<td>f(n)</td>
+							<td id="expandingColumn"></td>
+						</tr>
+					</thead>
+					<tbody id="tableBody">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>
