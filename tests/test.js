@@ -43,7 +43,7 @@ describe("State Learner", function () {
       sample.append("A");
 
       const prediction = sample.makePrediction();
-      const correctAnswer = new PredictionData(2, ["B","C"]);
+      const correctAnswer = new PredictionData(1, ["B","C"]);
 
       assert.deepStrictEqual(prediction, correctAnswer);
     });
@@ -59,7 +59,9 @@ describe("State Learner", function () {
       //a recent history that has no precedence, so that it will have to rely on searching for a zero-length history
       sample.append("Z");
 
-      assert.deepStrictEqual(sample.makePrediction().states, ["B"]);
+      const correctAnswer = new PredictionData(0, ["A"]);
+
+      assert.deepStrictEqual(sample.makePrediction(), correctAnswer);
     })
   });
 });
