@@ -18,11 +18,13 @@
     "state-learner": "github:thomasallanlamb/state-learner"
   },
   "devDependencies": {
+    "apply-loader": "^2.0.0",
+    "html-loader": "^0.4.5",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "mocha": "^3.3.0",
     "pug": "^2.0.0-rc.1",
     "pug-loader": "^2.3.0",
-    "webpack": "^2.6.0"
+    "webpack": "^2.6.1"
   }
 }
