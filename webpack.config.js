@@ -1,11 +1,14 @@
 const path = require("path");
+const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+    entry: path.resolve(__dirname, "client/app.js"),
+    
     output: {
         path: path.resolve(__dirname, "public"),
-        filename: "index.html"
+        filename: "index_bundle.js"
     },
-    entry: path.resolve(__dirname, "client/index.pug"),
+    
     module: {
         rules: [
             {
@@ -15,25 +18,38 @@ module.exports = {
                     { loader: "less-loader" }
                 ]
             },
+
             //evaluate .pug into static html using no local vars
-            {
+            /*{
                 test: /\.pug$/,
                 use: [
-                    { loader: "html-loader" },
+                    { loader: "file-loader",
+                        options: {
+                            name:"emitted"
+                        }
+                    },
+                    { loader: "extract-loader"},
+                    { loader: "html-loader"},
                     {   loader: "apply-loader",
                         options: {
-                            args: [{}]
+                            args: []
                     }   },
                     { loader: "pug-loader" }
                 ]
-            },
+            },*/
+
             {
-                test: /\.js$/,
+                test: /\.html$/,
                 use: [
-                    { loader: "js-loader" }
+                    { loader: "raw-loader"}
                 ]
             }
         ]
     },
+
+    watch: true,
+
+    plugins: [new HTMLWebpackPlugin()],
+
     devtool: "cheap-eval-source-map"
 };
