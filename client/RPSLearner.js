@@ -1,5 +1,6 @@
 const StateLearner = require("state-learner");
 const TEMPLATE = require("./index.html");
+const STYLE = require("./index.less");
 /* ???: 2017.05.29: Discovered comments said that these were used directly, but I can't see how. Possibly was originally intended as "types that are intantiated by other classes, but used here"? The PredictionData type is returned and by one of the methods used by this class (stateLearner.makePrediction).
 const PredictionData = require("PredictionData.js");
 //const IncidenceMap = require("IncidenceMap.js");
@@ -14,30 +15,47 @@ const SCISSORS = "S";
 const allStates = new Array(ROCK, PAPER, SCISSORS);
 
 function RPSLearner () {
+  this._rPSAI = new StateLearner();
+
   //???: not sure if the root should be an element, or a collection of sibling elements, or what. Choosing single element for now, because that is simpler to implement
   var dOMRoot = document.createElement("div");
   dOMRoot.innerHTML = TEMPLATE;
 
-  //???: how do you search within an element for an ID? For now, just search the entire document. This will break if the page has ID collisions.
-  dOMRoot.querySelector("#selectRock").addEventListener("click", selectRock);
-  dOMRoot.querySelector("#selectPaper").addEventListener("click", selectPaper);
-  dOMRoot.querySelector("#selectScissors").addEventListener("click", selectScissors);
+  //references to commonly-used elements
+  this._dOMShorthand = {
+    selectRock: dOMRoot.querySelector("#selectRock"),
+    selectPaper: dOMRoot.querySelector("#selectPaper"),
+    selectScissors: dOMRoot.querySelector("#selectScissors"),
+    rockGuess: dOMRoot.querySelector("#rockGuess"),
+    paperGuess: dOMRoot.querySelector("#paperGuess"),
+    scissorsGuess: dOMRoot.querySelector("#scissorsGuess"),
+    tableBody: dOMRoot.querySelector("#tableBody"),
+    guessVisible: dOMRoot.querySelector("#guessVisible"),
+    recall: dOMRoot.querySelector("#recall"),
+    aIAccuracy: dOMRoot.querySelector("#aIAccuracy"),
+    aIGain: dOMRoot.querySelector("#aIGain"),
+    normalizedGain: dOMRoot.querySelector("#normalizedGain")
+  }
 
-  this.rPSAI = new StateLearner();;
-  this.lastPrediction;
-  this.roundsPassed = 0;
-  var aIWins = 0;
+  //???: how do you search within an element for an ID? For now, just search the entire document. This will break if the page has ID collisions.
+  const th = this;
+  this._dOMShorthand.selectRock.addEventListener("click", function () {th._selectRock();});
+  this._dOMShorthand.selectPaper.addEventListener("click", function () {th._selectPaper();});
+  this._dOMShorthand.selectScissors.addEventListener("click", function () {th._selectScissors()});
+
   
-  //???: what do these do?
-  enforceRecall();
-  renewPrediction();
+  this._lastPrediction;
+  this._roundsPassed = 0;
+  this._aIWins = 0;
+  
+  //initialize
+  this._enforceRecall();
+  this._renewPrediction();
   
   this.dOMRoot = dOMRoot;
 }
 
-
-
-function enforcePredictionVisibility ()
+RPSLearner.prototype._enforcePredictionVisibility = function ()
 {
   function setInsidesOfTo (node, displayStyle)
   {
@@ -47,26 +65,23 @@ function enforcePredictionVisibility ()
     }
   }
   
-  var checkbox = document.getElementById("guessVisible");
-  if (!checkbox.checked)
+  if (!this._dOMShorthand.guessVisible.checked)
   {
-    setInsidesOfTo(document.getElementById("rockGuess"), "none");
-    setInsidesOfTo(document.getElementById("paperGuess"), "none");
-    setInsidesOfTo(document.getElementById("scissorsGuess"), "none");
+    setInsidesOfTo(this._dOMShorthand.rockGuess, "none");
+    setInsidesOfTo(this._dOMShorthand.paperGuess, "none");
+    setInsidesOfTo(this._dOMShorthand.scissorsGuess, "none");
   }
   else
   {
-    setInsidesOfTo(document.getElementById("rockGuess"), "block");
-    setInsidesOfTo(document.getElementById("paperGuess"), "block");
-    setInsidesOfTo(document.getElementById("scissorsGuess"), "block");
+    setInsidesOfTo(this._dOMShorthand.rockGuess, "block");
+    setInsidesOfTo(this._dOMShorthand.paperGuess, "block");
+    setInsidesOfTo(this._dOMShorthand.scissorsGuess, "block");
   }
 }
 
-function enforceRecall ()
+RPSLearner.prototype._enforceRecall = function ()
 {
-  var recallNode = document.getElementById("recall");
-  
-  var enteredRecall = Number(recallNode.value);
+  var enteredRecall = Number(this._dOMShorthand.recall.value);
   if (isNaN(enteredRecall))
   {
     //this will also catch misspellings of "Infinity," like "infinity," so we don't need to catch those specifically.
@@ -81,61 +96,61 @@ function enforceRecall ()
     enteredRecall = Math.round(enteredRecall, 1);
   }
   
-  rPSAI.recall = enteredRecall;
-  recallNode.value = enteredRecall;
+  this._rPSAI.recall = enteredRecall;
+  this._dOMShorthand.recall.value = enteredRecall;
 }
 
-function getPredictionCellOf (state)
+RPSLearner.prototype._getPredictionCellOf = function (state)
 {
   var predictionCell;
   if (state == ROCK)
   {
-    predictionCell = document.getElementById("rockGuess");
+    predictionCell = this._dOMShorthand.rockGuess;
   }
   else if (state == PAPER)
   {
-    predictionCell = document.getElementById("paperGuess");
+    predictionCell = this._dOMShorthand.paperGuess;
   }
   else if (state == SCISSORS)
   {
-    predictionCell = document.getElementById("scissorsGuess");
+    predictionCell = this._dOMShorthand.scissorsGuess;
   }
   return predictionCell;
 }
 
-function selectRock ()
+RPSLearner.prototype._selectRock = function ()
 {
-  rPSAI.takeInput(ROCK);
-  addHistory(ROCK, lastPrediction);
-  renewPrediction();
+  this._rPSAI.append(ROCK);
+  this._addHistory(ROCK, this._lastPrediction);
+  this._renewPrediction();
 }
 
-function selectPaper ()
+RPSLearner.prototype._selectPaper = function ()
 {
-  rPSAI.takeInput(PAPER);
-  addHistory(PAPER, lastPrediction);
-  renewPrediction();
+  this._rPSAI.append(PAPER);
+  this._addHistory(PAPER, this._lastPrediction);
+  this._renewPrediction();
 }
 
-function selectScissors ()
+RPSLearner.prototype._selectScissors = function ()
 {
-  rPSAI.takeInput(SCISSORS);
-  addHistory(SCISSORS, lastPrediction);
-  renewPrediction();
+  this._rPSAI.append(SCISSORS);
+  this._addHistory(SCISSORS, this._lastPrediction);
+  this._renewPrediction();
 }
 
-function renewPrediction ()
+RPSLearner.prototype._renewPrediction = function ()
 {
   //clear old prediction
-  if (lastPrediction != undefined)
+  if (this._lastPrediction != undefined)
   {
-    var oldPredictionCell = getPredictionCellOf(lastPrediction);
+    var oldPredictionCell = this._getPredictionCellOf(this._lastPrediction);
     var oldPredictionSpan = oldPredictionCell.childNodes[0];
     oldPredictionCell.removeChild(oldPredictionSpan);
   }
   
-  var predictionData = rPSAI.makePrediction();
-  if (predictionData.matchLength == undefined)
+  var predictionData = this._rPSAI.makePrediction();
+  if (predictionData === undefined)
   {
     //if predictionData.matchLength is undefined, that means that StateLearner was forced to make a prediction without any data.
     var randomIndex = Math.round(Math.random()*(allStates.length-1));
@@ -152,26 +167,26 @@ function renewPrediction ()
     var newPrediction = predictionData.states[0];
   }
   
-  var predictionCell = getPredictionCellOf(newPrediction);
+  var predictionCell = this._getPredictionCellOf(newPrediction);
   
   var box = document.createElement("span");
   box.className = "aISelect";
   predictionCell.appendChild(box);
   
-  lastPrediction = newPrediction;
+  this._lastPrediction = newPrediction;
   
-  enforcePredictionVisibility();
+  this._enforcePredictionVisibility();
 }
 
-function addHistory (humanSelection, aISelection)
+RPSLearner.prototype._addHistory = function (humanSelection, aISelection)
 {
-  var tableNode = document.getElementById("tableBody");
+  var tableNode = this._dOMShorthand.tableBody;
   var recentRow = tableNode.getElementsByTagName("tr")[3];
   //remove the text "History:" from recent row and replace it with the round number, because it is going to be shifted down.
   var roundCell = recentRow.getElementsByTagName("td")[0];
   var roundText = roundCell.firstChild;
   //it's roundsPassed-1 because we're labelling the row for the round that has just passed and is being pushed down.
-  roundText.data = roundsPassed+1;
+  roundText.data = this._roundsPassed+1;
   
   var newRow = document.createElement("tr");
   var historyCell = document.createElement("td");
@@ -217,7 +232,7 @@ function addHistory (humanSelection, aISelection)
   newRow.appendChild(scissorsCell);
   
   tableNode.insertBefore(newRow, recentRow);
-  if (roundsPassed == 0)
+  if (this._roundsPassed == 0)
   {
     //if this is the first round, then the previous round's row that just got pushed down will be the blank placeholder row that the page is initialized with, so delete it for aesthetics' sake.
     tableNode.removeChild(recentRow);
@@ -226,41 +241,23 @@ function addHistory (humanSelection, aISelection)
   //update statistics
   if (aISelection == humanSelection)
   {
-    aIWins++;
-  }
-  var aIAccuracyNode = document.getElementById("aIAccuracy");
-  var aIGainNode = document.getElementById("aIGain");
-  var normalizedNode = document.getElementById("normalizedGain");
-  //the statistics are blank in the first round, and they can't be filled until two rounds have passed, so we don't have to empty them before adding the new ones if either of these conditions hold.
-  
-  //remove data if roundsPassed >= 1 because only then will there be any data to remove
-  if (roundsPassed >= 1)
-  {
-    var oldAccuracy = aIAccuracyNode.firstChild
-    var oldGain = aIGainNode.firstChild
-    var oldNormalized = normalizedNode.firstChild;
-    aIAccuracyNode.removeChild(oldAccuracy);
-    aIGainNode.removeChild(oldGain);
-    normalizedNode.removeChild(oldNormalized);
+    this._aIWins++;
   }
   
-  var newAccuracy = aIWins/(roundsPassed+1);
-  //*10000/100 dance is done to get an answer to 2 decimal places
+  var newAccuracy = this._aIWins/(this._roundsPassed+1);
+  //*10000/100 is done to get an answer to 2 decimal places
   var newAccuracyPercentage = (Math.round(newAccuracy*10000)/100);
-  var newAccuracyText = document.createTextNode(newAccuracyPercentage+"%");
-  aIAccuracyNode.appendChild(newAccuracyText);
+  this._dOMShorthand.aIAccuracy.innerHTML = newAccuracyPercentage+"%"
   
   var newGain = (newAccuracy-(1/allStates.length));
   var newGainPercentage = Math.round(newGain*10000)/100;
-  var newGainText = document.createTextNode(newGainPercentage+"%");
-  aIGainNode.appendChild(newGainText);
+  this._dOMShorthand.aIGain.innerHTML = newGainPercentage+"%";
   
   var newNormalized = newGain/(1/3);
   var newNormalizedPercentage = Math.round(newNormalized*10000)/100;
-  var newNormalizedText = document.createTextNode(newNormalizedPercentage+"%");
-  normalizedNode.appendChild(newNormalizedText);
+  this._dOMShorthand.normalizedGain.innerHTML = newNormalizedPercentage+"%";
   
-  roundsPassed++;
+  this._roundsPassed++;
 }
 
 module.exports = RPSLearner;
