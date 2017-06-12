@@ -20,8 +20,6 @@ node_modules
 *.gz
 
 
-# Coveralls
-coverage
-
-# Benchmarking
-benchmarks/graphs
+# Output from webpack
+./index.html
+./index_bundle.js

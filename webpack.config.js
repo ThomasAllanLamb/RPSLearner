@@ -48,8 +48,6 @@ module.exports = {
         ]
     },
 
-    watch: true,
-
     plugins: [new HTMLWebpackPlugin()],
 
     devtool: "cheap-eval-source-map"
