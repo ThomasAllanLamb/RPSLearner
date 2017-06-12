@@ -1,6 +1,6 @@
 const StateLearner = require("state-learner");
-const TEMPLATE = require("./index.html");
-const STYLE = require("./index.less");
+
+
 /* ???: 2017.05.29: Discovered comments said that these were used directly, but I can't see how. Possibly was originally intended as "types that are intantiated by other classes, but used here"? The PredictionData type is returned and by one of the methods used by this class (stateLearner.makePrediction).
 const PredictionData = require("PredictionData.js");
 //const IncidenceMap = require("IncidenceMap.js");
@@ -19,7 +19,12 @@ function RPSLearner () {
 
   //???: not sure if the root should be an element, or a collection of sibling elements, or what. Choosing single element for now, because that is simpler to implement
   var dOMRoot = document.createElement("div");
-  dOMRoot.innerHTML = TEMPLATE;
+  dOMRoot.innerHTML = require("./index.html");
+
+  var styleElement = document.createElement("style");
+  //loaders convert less to css so we don't have to do it here
+  styleElement.innerHTML = require("./index.less");
+  dOMRoot.appendChild(styleElement);
 
   //references to commonly-used elements
   this._dOMShorthand = {

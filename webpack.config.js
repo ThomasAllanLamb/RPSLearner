@@ -14,7 +14,6 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                    { loader: "style-loader" },
                     { loader: "css-loader" },
                     { loader: "less-loader" }
                 ]
@@ -24,12 +23,7 @@ module.exports = {
             /*{
                 test: /\.pug$/,
                 use: [
-                    { loader: "file-loader",
-                        options: {
-                            name:"emitted"
-                        }
-                    },
-                    { loader: "extract-loader"},
+                    { loader: "raw-loader" }
                     { loader: "html-loader"},
                     {   loader: "apply-loader",
                         options: {
