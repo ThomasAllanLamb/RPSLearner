@@ -1,12 +1,5 @@
 const StateLearner = require("state-learner");
 
-
-/* ???: 2017.05.29: Discovered comments said that these were used directly, but I can't see how. Possibly was originally intended as "types that are intantiated by other classes, but used here"? The PredictionData type is returned and by one of the methods used by this class (stateLearner.makePrediction).
-const PredictionData = require("PredictionData.js");
-//const IncidenceMap = require("IncidenceMap.js");
-const ArrayMap = require("ArrayMap.js");
-*/
-
 //???: is there a new way of doing enumerations in ECMAScript? Should I use it here? 
 //faux enumeration
 const ROCK = "R";
@@ -19,7 +12,7 @@ function RPSLearner () {
 
   //???: not sure if the root should be an element, or a collection of sibling elements, or what. Choosing single element for now, because that is simpler to implement
   var dOMRoot = document.createElement("div");
-  dOMRoot.innerHTML = require("./index.html");
+  dOMRoot.innerHTML = require("./index.pug");
 
   var styleElement = document.createElement("style");
   //loaders convert less to css so we don't have to do it here
@@ -42,7 +35,6 @@ function RPSLearner () {
     normalizedGain: dOMRoot.querySelector("#normalizedGain")
   }
 
-  //???: how do you search within an element for an ID? For now, just search the entire document. This will break if the page has ID collisions.
   const th = this;
   this._dOMShorthand.selectRock.addEventListener("click", function () {th._selectRock();});
   this._dOMShorthand.selectPaper.addEventListener("click", function () {th._selectPaper();});

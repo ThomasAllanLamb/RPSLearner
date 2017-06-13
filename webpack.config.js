@@ -20,23 +20,11 @@ module.exports = {
             },
 
             //evaluate .pug into static html using no local vars
-            /*{
+            {
                 test: /\.pug$/,
                 use: [
-                    { loader: "raw-loader" }
-                    { loader: "html-loader"},
-                    {   loader: "apply-loader",
-                        options: {
-                            args: []
-                    }   },
+                    { loader: "apply-loader" },
                     { loader: "pug-loader" }
-                ]
-            },*/
-
-            {
-                test: /\.html$/,
-                use: [
-                    { loader: "raw-loader"}
                 ]
             }
         ]
