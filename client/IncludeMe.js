@@ -1,1 +1,0 @@
-alert('IncludeMe.js has been included');

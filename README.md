@@ -1,7 +1,7 @@
 # Setup for development
 
 ```shell
-git install
+npm install
 webpack
 npm start
 ```
@@ -9,21 +9,19 @@ npm start
 Visit http://localhost:3000.
 
 
-# Setup for production
+# Setup for production on port 80
+
 
 ```shell
-git install
+npm install
 webpack -p
-npm start
+sudo PORT=80 node ./bin/www
 ```
 
 
 # TODO
 
-- Several functions e.g. arrayMap.get, arrayMap.set solve something by using helper methods. But instead of having separate methods, they overload the original method. This seems messy. Convert to two separate methods: one public, one private helper.
-- Webpack title
 - When updating statistics, don't use .innerHTML. Use method intended for text.
-- Create production version of webpack
+- Create production version
 - Modernize markup and style
 - Modernize class syntax. Maybe es6?
-- Migrate about page
