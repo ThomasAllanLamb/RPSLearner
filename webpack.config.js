@@ -42,7 +42,9 @@ module.exports = {
         ]
     },
 
-    plugins: [new HTMLWebpackPlugin()],
+    plugins: [new HTMLWebpackPlugin({
+        title: "RPS Learner"
+    })],
 
-    devtool: "cheap-eval-source-map"
+    devtool: "cheap-source-map"
 };

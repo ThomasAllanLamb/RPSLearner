@@ -1,12 +1,21 @@
-# Setup
+# Setup for development
 
 ```shell
 git install
-npm build
+webpack
 npm start
 ```
 
-Visit (http://localhost:3000).
+Visit http://localhost:3000.
+
+
+# Setup for production
+
+```shell
+git install
+webpack -p
+npm start
+```
 
 
 # TODO
