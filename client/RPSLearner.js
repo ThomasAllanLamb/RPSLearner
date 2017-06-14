@@ -183,14 +183,15 @@ RPSLearner.prototype._addHistory = function (humanSelection, aISelection)
   var tableNode = this._dOMShorthand.tableBody;
   var recentRow = tableNode.getElementsByTagName("tr")[3];
   //remove the text "History:" from recent row and replace it with the round number, because it is going to be shifted down.
+  
   var roundCell = recentRow.getElementsByTagName("td")[0];
   var roundText = roundCell.firstChild;
   //it's roundsPassed-1 because we're labelling the row for the round that has just passed and is being pushed down.
-  roundText.data = this._roundsPassed+1;
+  roundText.data = this._roundsPassed;
   
   var newRow = document.createElement("tr");
   var historyCell = document.createElement("td");
-  var historyText = document.createTextNode("History:");
+  var historyText = document.createTextNode(this._roundsPassed+1);
   historyCell.appendChild(historyText);
   newRow.appendChild(historyCell);
   
