@@ -1,96 +1,125 @@
-body
+@cellSpacing: 3px;
+@cellHeight: 30px;
+@historyWidth: 150px;
+@buttonWidth: 60px;
+@gameZoneWidth: @historyWidth + 3*@buttonWidth + @boringWidth + 5*@cellSpacing;
+@boringWidth: 200px;
+
+*
 {
-  margin:0px;
-  padding:0px;
-  text-align:center;
-  font-size:16px;
+  box-sizing: border-box;
+} 
+
+#about
+{
+  margin-bottom:30px;
+
+  p, h1
+  {
+    margin:0 auto;
+    text-align:center;
+  }
+
+  h1 {
+    margin-bottom:0.7em;
+  }
 }
 
-#centeredBlock
-{
-  width:750px;
-  text-align:left;
-  margin:0px auto;
-}
+#game-zone {
+  width: @gameZoneWidth;
+  overflow:auto;
+  position:absolute;
+  left: 50%;
+  margin-left: -1*(@cellSpacing+@historyWidth + (4*@cellSpacing + 3*@buttonWidth)/2);
 
-p
-{
-  text-indent:30px;
-}
+  >*
+  {
+    float:left;
+  }
 
-#rPSTable
-{
-  float:left;
-  margin-right:40px;
-  border-spacing:3px;
-}
+  >#stateHistory {
+    text-align:left;
+    border-spacing: @cellSpacing;
 
-td
-{
-  padding:4px;
-  height:30px;
-  text-align:center;
-}
+    td {
+      text-align:center;
+      height: @cellHeight;
+    }
 
-.indexColumn
-{
-  width:150px;
-}
+    .indexColumn {
+      width: @historyWidth;
+    }
 
-.stateColumn
-{
-  width:50px;
-}
+    .stateColumn {
+      width: @buttonWidth;
+    }
 
-.button
-{
-  background-color:#EEF5F5;
-  border:solid 1px black;
-  padding:0px;
-  -moz-border-radius:7px;
-  cursor:pointer;
-  font-size:25px;
-}
+    .button {
+      background-color: #EEF5F5;
+      border:solid 1px black;
+      padding:0px;
+      cursor:pointer;
+      font-size:25px;
 
-.button:hover
-{
-  background-color:#CFC;
-}
+      &:hover {
+        background-color:#CFC;
+      }
+    }
 
-.humanSelect, .aISelect, .bothSelect
-{
-  display:block;
-  margin:auto;
-  width:30px;
-  height:30px;
-  text-align:center;
-}
+    .humanSelect, .aISelect, .bothSelect
+    {
+      display:block;
+      margin:auto;
+      width:30px;
+      height:30px;
+      text-align:center;
+    }
 
-.humanSelect
-{
-  opacity:0.5;
-  background-color:red;
-}
+    .humanSelect
+    {
+      opacity:0.5;
+      background-color:red;
+    }
 
-.aISelect
-{
-  opacity:0.5;
-  background-color:blue;
-}
+    .aISelect
+    {
+      opacity:0.5;
+      background-color:blue;
+    }
 
-.bothSelect
-{
-  background-color:purple;
-}
+    .bothSelect
+    {
+      background-color:purple;
+    }
+  }
 
-#statistics td
-{
-  text-align:left;
-  font-size:18px;
-}
+  >#boring-zone {
+    padding-top: 2*@cellHeight+@cellSpacing;
+    width: @boringWidth;
 
-#aIAccuracy, #aIGain, #normalizedGain
-{
-  font-size:20px;
-  font-family:monospace;
+    >#options {
+      list-style-type: none;
+      padding:0;
+      
+      >li > #recall {
+        font-size:18px;
+        width:5em;
+        font-family:monospace;
+      }
+    }
+    
+    >#statistics
+    {
+      td {
+        text-align:left;
+        font-size:18px;
+
+        #aIAccuracy, #aIGain, #normalizedGain
+        {
+          font-size:20px;
+          font-family:monospace;
+        }
+      }
+    }
+  }
 }

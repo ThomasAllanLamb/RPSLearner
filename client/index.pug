@@ -1,7 +1,8 @@
-h1 Rock, Paper, Scissors Learner:
-p AI opponent that plays and gets better through practice. <a href="AboutRPSLearner.html">More information...</a>
-div
-	table#rPSTable
+div#about
+	h1 Rock, Paper, Scissors Learner
+	p AI opponent that plays and gets better through practice. <a href="AboutRPSLearner.html">More information...</a>
+div#game-zone
+	table#stateHistory
 		thead
 			tr
 				td.indexColumn
@@ -10,34 +11,35 @@ div
 				td.stateColumn Scissors
 		tbody#tableBody
 			tr
-				td: span(class="humanSelect" style="float:left; width:1em; height:1em;") Your choice
+				td
 				td#selectRock.button &#x235C;<!-- alternative button labels: Rock &#x25EF; &#x235C; &#x2296; &#x2295; &#x2297; &#x20DD; -->
 				td#selectPaper.button &#x2395;<!-- alternative button labels: Paper -->
 				td#selectScissors.button &#x2704;<!-- alternative button labels: Scissors &#x2703; -->
 			tr
-				td: span.aISelect(style="float:left; width:1em; height:1em;") AI's prediction
+				td History:
 				td: div#rockGuess
 				td: div#paperGuess
 				td: div#scissorsGuess
 			tr: td
 			tr
-				td History:
+				td 
 				td
 				td
 				td
 
-	<!-- options section -->
-	<input id="guessVisible" name="guessVisible" type="checkbox" onclick="enforcePredictionVisibility()" /> AI Prediction visible
-	div Recall limit: <input id="recall" name="recall" type="text" onblur="enforceRecall()" value="Infinity" style="font-size:18px;width:5em;font-family:monospace;" />
-	
-	table#statistics
-		tbody
-			tr
-				td AI Accuracy:
-				td: span#aIAccuracy
-			tr
-				td Gain from AI:
-				td: span#aIGain
-			tr
-				td Normalized:
-				td: span#normalizedGain
+	div#boring-zone
+		ul#options
+			li <input id="guessVisible" name="guessVisible" type="checkbox" /> AI Prediction visible
+			li Recall limit: <input id="recall" name="recall" type="text" onblur="enforceRecall()" value="Infinity" />
+		
+		table#statistics
+			tbody
+				tr
+					td AI Accuracy:
+					td: span#aIAccuracy
+				tr
+					td Gain from AI:
+					td: span#aIGain
+				tr
+					td Normalized:
+					td: span#normalizedGain

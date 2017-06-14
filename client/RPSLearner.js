@@ -35,10 +35,12 @@ function RPSLearner () {
     normalizedGain: dOMRoot.querySelector("#normalizedGain")
   }
 
+  //when you click buttons
   const th = this;
   this._dOMShorthand.selectRock.addEventListener("click", function () {th._selectRock();});
   this._dOMShorthand.selectPaper.addEventListener("click", function () {th._selectPaper();});
   this._dOMShorthand.selectScissors.addEventListener("click", function () {th._selectScissors()});
+  this._dOMShorthand.guessVisible.addEventListener("click", function () {th._enforcePredictionVisibility()});
 
   
   this._lastPrediction;
@@ -48,6 +50,7 @@ function RPSLearner () {
   //initialize
   this._enforceRecall();
   this._renewPrediction();
+  this._enforcePredictionVisibility();
   
   this.dOMRoot = dOMRoot;
 }

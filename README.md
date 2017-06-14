@@ -2,8 +2,8 @@
 
 ```shell
 npm install
-webpack
-npm start
+webpack --watch
+nodemon start
 ```
 
 Visit http://localhost:3000.
@@ -25,3 +25,6 @@ sudo PORT=80 node ./bin/www
 - Create production version
 - Modernize markup and style
 - Modernize class syntax. Maybe es6?
+- Move recall click event from tag to js
+- Rename inputs from the variable they represent to something which distinguishes them from the variable.
+- .dOMRoot way of exposing the DOM is kind of sketchy. Also makes it hard to write CSS for root elements. And CSS might affect unintended elements elsewhere in the document. Look into alternatives. Maybe iframe? DocumentFragment? maybe change index markup to include a root element?
