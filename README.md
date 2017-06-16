@@ -17,7 +17,7 @@ Visit http://localhost:3000.
 
 ```shell
 npm install
-webpack -p
+npm run build
 sudo PORT=80 node ./bin/www
 ```
 
