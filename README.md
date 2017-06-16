@@ -3,6 +3,7 @@
 ```shell
 npm install
 webpack --watch
+```
 
 New terminal window:
 ```shell
@@ -32,3 +33,4 @@ sudo PORT=80 node ./bin/www
 - How should About page be handled? Currently handled as an independent entry point which is emitted with file-loader. Is there a way to emit it without using file-loader? Emitting this way seems kind of hacky because file-loader is intended for creating links, which is slightly different.
 - How to deploy? I'm guessing prod should get bundles instead of sources
 - Add link to github repo
+- Recall limit currently maps 1 onto "remember nothing" and 0 locks. 0 should be "remember nothing"

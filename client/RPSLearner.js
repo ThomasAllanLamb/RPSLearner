@@ -41,6 +41,8 @@ function RPSLearner () {
   this._dOMShorthand.selectPaper.addEventListener("click", function () {th._selectPaper();});
   this._dOMShorthand.selectScissors.addEventListener("click", function () {th._selectScissors()});
   this._dOMShorthand.guessVisible.addEventListener("click", function () {th._enforcePredictionVisibility()});
+  this._dOMShorthand.recall.addEventListener("blur", function () {th._enforceRecall()});
+
 
   
   this._lastPrediction;
