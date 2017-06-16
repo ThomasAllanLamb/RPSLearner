@@ -1,0 +1,124 @@
+@cellSpacing: 3px;
+@cellHeight: 30px;
+@historyWidth: 150px;
+@buttonWidth: 60px;
+@gameZoneWidth: @historyWidth + 3*@buttonWidth + @boringWidth + 5*@cellSpacing;
+@boringWidth: 200px;
+
+*
+{
+  box-sizing: border-box;
+} 
+
+#about
+{
+  margin-bottom:30px;
+
+  p, h1
+  {
+    margin:0 auto;
+    text-align:center;
+  }
+
+  h1 {
+    margin-bottom:0.7em;
+  }
+}
+
+#game-zone {
+  width: @gameZoneWidth;
+  overflow:auto;
+  position:absolute;
+  left: 50%;
+  margin-left: -1*(@cellSpacing+@historyWidth + (4*@cellSpacing + 3*@buttonWidth)/2);
+
+  >*
+  {
+    float:left;
+  }
+
+  >#stateHistory {
+    text-align:left;
+    border-spacing: @cellSpacing;
+
+    td {
+      text-align:center;
+      height: @cellHeight;
+    }
+
+    .indexColumn {
+      width: @historyWidth;
+    }
+
+    .stateColumn {
+      width: @buttonWidth;
+    }
+
+    .button {
+      background-color: #EEF5F5;
+      border:solid 1px black;
+      padding:0px;
+      cursor:pointer;
+      font-size:25px;
+
+      &:hover {
+        background-color:#CFC;
+      }
+    }
+
+    .humanSelect, .aISelect, .bothSelect
+    {
+      display:block;
+      margin:auto;
+      width:30px;
+      height:30px;
+      text-align:center;
+    }
+
+    .humanSelect
+    {
+      opacity:0.5;
+      background-color:red;
+    }
+
+    .aISelect
+    {
+      opacity:0.5;
+      background-color:blue;
+    }
+
+    .bothSelect
+    {
+      background-color:purple;
+    }
+  }
+
+  >#boring-zone {
+    padding-top: 2*@cellHeight+@cellSpacing;
+    width: @boringWidth;
+
+    >#options {
+      list-style-type: none;
+      padding:0;
+      
+      >li > #recall {
+        font-size:18px;
+        width:5em;
+        font-family:monospace;
+      }
+    }
+    
+    >#statistics {
+      td {
+        text-align:left;
+        font-size:18px;
+
+        #aIAccuracy, #aIGain, #normalizedGain
+        {
+          font-size:20px;
+          font-family:monospace;
+        }
+      }
+    }
+  }
+}
