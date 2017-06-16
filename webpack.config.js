@@ -2,11 +2,14 @@ const path = require("path");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: path.resolve(__dirname, "client/app.js"),
+    entry: [
+        path.resolve(__dirname, "client/app.js"),
+        path.resolve(__dirname, "client/About.html")
+    ],
     
     output: {
         path: path.resolve(__dirname, "public"),
-        filename: "index_bundle.js"
+        filename: "[name].js"
     },
     
     module: {
@@ -25,6 +28,17 @@ module.exports = {
                 use: [
                     { loader: "apply-loader" },
                     { loader: "pug-loader" }
+                ]
+            },
+
+            {
+                test: /\.html$/,
+                use: [
+                    { loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]"
+                        }
+                    }
                 ]
             }
         ]
