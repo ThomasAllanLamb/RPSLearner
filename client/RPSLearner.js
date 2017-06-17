@@ -12,11 +12,11 @@ function RPSLearner () {
 
   //???: not sure if the root should be an element, or a collection of sibling elements, or what. Choosing single element for now, because that is simpler to implement
   var dOMRoot = document.createElement("div");
-  dOMRoot.innerHTML = require("./index.pug");
+  dOMRoot.innerHTML = require("./app.pug");
 
   var styleElement = document.createElement("style");
   //loaders convert less to css so we don't have to do it here
-  styleElement.innerHTML = require("./index.less");
+  styleElement.innerHTML = require("./app.less");
   dOMRoot.appendChild(styleElement);
 
   //references to commonly-used elements

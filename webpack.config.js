@@ -45,7 +45,8 @@ module.exports = {
     },
 
     plugins: [new HTMLWebpackPlugin({
-        title: "RPS Learner"
+        title: "RPS Learner",
+        template: "client/index.pug"
     })],
 
     devtool: "cheap-source-map"
