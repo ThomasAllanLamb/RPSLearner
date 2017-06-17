@@ -33,6 +33,7 @@ sudo PORT=80 node ./bin/www
 - How to deploy? I'm guessing prod should get bundles instead of sources
 - Recall limit currently maps 1 onto "remember nothing" and 0 locks. 0 should be "remember nothing"
 - there is a resolution which chops off boring section.
-- Responsive:
-  - Chromium works
-  - Mobile Chrome does not
+- Ensure cross-browser
+  - chrome good
+  - ie ???
+  - firefox bad

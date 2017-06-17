@@ -1,0 +1,92 @@
+@cellSpacing: 3px;
+@cellHeight: 35px;
+@buttonWidth: 67px;
+
+*
+{
+  box-sizing: border-box;
+} 
+
+#about
+{
+  margin-bottom:30px;
+
+  h1, p {
+    margin:0 auto;
+    text-align:center;
+  }
+
+  h1 {
+    margin-top: 0.5em;
+    margin-bottom:0.7em;
+    padding:0px 70px;
+    font-size:24px;
+    font-weight: bold;
+  }
+
+  p {
+    padding: 0px 35px;
+  }
+}
+
+#game-zone {
+  overflow:auto;
+  position:absolute;
+  left: 50%;
+
+  >#stateHistory {
+    text-align:left;
+    border-spacing: @cellSpacing;
+    border-collapse: separate;
+
+    >* {
+
+      td {
+        text-align:center;
+        height: @cellHeight;
+      }
+
+      .stateColumn {
+        width: @buttonWidth;
+      }
+
+      .button {
+        background-color: #EEF5F5;
+        border:solid 1px black;
+        padding:0px;
+        cursor:pointer;
+        font-size:25px;
+
+        &:hover {
+          background-color:#CFC;
+        }
+      }
+
+      .humanSelect, .aISelect, .bothSelect
+      {
+        display:block;
+        margin:auto;
+        width:30px;
+        height:30px;
+        text-align:center;
+      }
+
+      .humanSelect
+      {
+        opacity:0.5;
+        background-color:red;
+      }
+
+      .aISelect
+      {
+        opacity:0.5;
+        background-color:blue;
+      }
+
+      .bothSelect
+      {
+        background-color:purple;
+      }
+    }
+  }
+}

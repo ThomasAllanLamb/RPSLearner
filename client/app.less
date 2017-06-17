@@ -1,9 +1,12 @@
+@import "./reset.css";
 
+@import "./common.less";
 
-@media (max-width: 480px) {
+//???: breakpoint manually set based on variables @boringWidth @historyWidth in standard.less, as well as @buttonWidth and @cellSpacing in common.less. How can this be set automatically?
+@media (max-width: 545px) {
   @import "./minimal.less";
 }
 
-@media (min-width:481px) {
+@media (min-width: 546px) {
   @import "./standard.less";
 }
