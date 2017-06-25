@@ -1,4 +1,4 @@
-const StateLearner = require("state-learner");
+const StateLearner = require("state-learner").StateLearner;
 
 //???: is there a new way of doing enumerations in ECMAScript? Should I use it here? 
 //faux enumeration
